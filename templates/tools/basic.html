@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_content %}
+    <title>Learning Tools - VishwaSetu</title>
+{% endblock head_content %}
+
+{% block container %}
+<head>
+    <style> 
+        div.container {
+          width: 100%;
+        }
+        
+        div.box {
+          box-sizing: border-box;
+          width: 35%;
+          background: greenyellow;
+          float: left;
+          padding: 20px;
+          margin:40px;
+          text-align: center;
+          color: black;
+          font-weight: bold;
+          font-size: 25px;
+
+        }
+
+    </style>    
+</head>
+
+<div class="container">
+    <a href="/tools/dictionary">
+        <div class="box">Dictionary</div>
+    </a>
+    <a href="/tools/sandhi-splitter">
+        <div class="box">Translator</div>
+    </a>
+    
+    <div style="clear:both;"></div>
+</div>
+
+<div class="container">
+    <a href="/tools/sandhi">
+        <div class="box">Sandhi</div>
+    </a>
+    <a href="/tools/sandhi-splitter">
+        <div class="box">Sandhi-Splitter</div>
+    </a>
+    
+    <div style="clear:both;"></div>
+</div>
+
+<div class="container">
+    <a href="/tools/sandhi">
+        <div class="box">Resources</div>
+    </a>
+    <a href="/tools/sandhi-splitter">
+        <div class="box">DuoLingo</div>
+    </a>
+    
+    <div style="clear:both;"></div>
+</div>
+
+{% endblock %}
+
