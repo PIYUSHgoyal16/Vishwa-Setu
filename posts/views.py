@@ -40,6 +40,22 @@ class PostFeedView(ListView):
     paginate_by = 4
     context_object_name = 'posts'
 
+    def get_queryset(self):
+        view = self.request.GET.get('view', 'personal')
+        if view == 'personal':
+            new_context = Post.objects.filter(profile = self.request.user.profile)
+            return new_context
+        elif view == 'global':
+            return Post.objects.all()
+        else:
+            return Post.objects.filter(Profile = self.request.user)
+            
+    def get_context_data(self, **kwargs):
+        context = super(PostFeedView, self).get_context_data(**kwargs)
+        context["view"] = self.request.GET.get('view', 'personal')
+        return context
+
+
 
 class PostDetailView(DetailView):
     """Detail view posts"""
