@@ -75,7 +75,7 @@ def toggle_like(request):
         post_id = request.POST["post_id"]
         print("post_id: ", post_id)
         post = Post.objects.get(pk=post_id)
-        # toggle like
+        # toggle like/unlike
         try:
             Like.objects.get(user=user, post=post).delete()
             return JsonResponse({"like_status" : 0, "likes_cnt": str(post.like_set.all().count())})
