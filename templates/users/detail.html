@@ -22,27 +22,23 @@
                             Edit profile
                         </a>
                     {% else %}
-                        <span
-                            class="ml-5 btn btn-sm btn-primary follow_toggle_button"
-                            data-user-id="{{ user.profile.pk }}"
+                        <a
+                            href=""
+                            class="ml-5 btn btn-sm btn-primary"
                         >
-                            {% if user_follows_this == True %}
-                            Following 
-                            {% else %}
-                            Follow 
-                            {% endif %}
-                        </span>
+                            Follow
+                        </a>
                     {% endif %}
                 </h2>
                 <div class="row mt-2" style="font-size: 1.2em">
                     <div class="col-sm-4">
-                        <b>{{ user.profile.posts.count }}</b> posts
+                        <b>{{ user.profile.posts_count }}785</b> posts
                     </div>
                     <div class="col-sm-4">
-                        <b class="followers">{{ user.profile.following.count }}</b> followers
+                        <b>{{ user.profile.followers }}1,401</b> followers
                     </div>
                     <div class="col-sm-4">
-                        <b>{{ user.profile.follower.count }}</b> following
+                        <b>{{ user.profile.following }}491</b> following
                     </div>
                 </div>
                 <div class="row mt-4">

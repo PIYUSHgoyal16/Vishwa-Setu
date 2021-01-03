@@ -9,8 +9,6 @@ from users import views
 
 urlpatterns = [
 
-    path('follow', views.toggle_follow, name='follow'),
-
     # Management
     path(
         route='signup/',
@@ -39,5 +37,4 @@ urlpatterns = [
         view=login_required(views.UserDetailView.as_view()),
         name='detail'
     ),
-
 ]

@@ -17,15 +17,19 @@ urlpatterns = [
 
     path(
         route='posts/new/',
-        view=views.CreatePostView.as_view(),
+        view=views.CreatePostView,
         name='create_post'
     ),
+
+    # path(
+    #     route='posts/new/createFromPhoto',
+    #     view=views.
+    #     name='create_post_fromPhoto'
+    # ),
 
     path(
         route='posts/<int:post_id>/',
         view=login_required(views.PostDetailView.as_view()),
         name='detail'
     ),
-
-    path('like', views.toggle_like, name='like'),
 ]

@@ -14,3 +14,7 @@ class PostForm(forms.ModelForm):
 		"""Form settings."""
 		model = Post
 		fields = ('profile', 'title', 'photo')
+
+class PostForm2(forms.Form):
+	literature = forms.CharField(widget=forms.Textarea)
+	
