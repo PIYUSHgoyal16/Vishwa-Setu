@@ -2,11 +2,13 @@
 from django.contrib import admin
 
 # Register your models here.
-from posts.models import Post
+from posts.models import Post, Like
 from users.models import Profile
 
 
-@admin.register(Post)
+admin.site.register(Post)
+admin.site.register(Like)
+
 class PostAdmin(admin.ModelAdmin):
     """Post Admin"""
     # Lista de los atributos que mostrara en el admin

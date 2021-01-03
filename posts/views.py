@@ -1,13 +1,17 @@
 """Posts Views"""
 
 # Django
+from django.contrib.auth.decorators import login_required
+from django.http.response import HttpResponse, JsonResponse
+from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-# from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 # Models
-from posts.models import Post
+from posts.models import Post, Like
+from users.models import Profile
 
 # Forms
 from posts.forms import PostForm
@@ -36,6 +40,22 @@ class PostFeedView(ListView):
     paginate_by = 4
     context_object_name = 'posts'
 
+    def get_queryset(self):
+        view = self.request.GET.get('view', 'personal')
+        if view == 'personal':
+            new_context = Post.objects.filter(profile = self.request.user.profile)
+            return new_context
+        elif view == 'global':
+            return Post.objects.all()
+        else:
+            return Post.objects.filter(Profile = self.request.user)
+            
+    def get_context_data(self, **kwargs):
+        context = super(PostFeedView, self).get_context_data(**kwargs)
+        context["view"] = self.request.GET.get('view', 'personal')
+        return context
+
+
 
 class PostDetailView(DetailView):
     """Detail view posts"""
@@ -44,3 +64,24 @@ class PostDetailView(DetailView):
     slug_url_kwarg = 'post_id'
     queryset = Post.objects.all()
     context_object_name = 'post'
+
+
+@login_required
+@require_POST
+@csrf_exempt
+def toggle_like(request):
+    if request.method == 'POST':
+        user = Profile.objects.get(user=request.user)
+        post_id = request.POST["post_id"]
+        print("post_id: ", post_id)
+        post = Post.objects.get(pk=post_id)
+        # toggle like/unlike
+        try:
+            Like.objects.get(user=user, post=post).delete()
+            return JsonResponse({"like_status" : 0, "likes_cnt": str(post.like_set.all().count())})
+        except Like.DoesNotExist:
+            Like.objects.create(user=user, post=post)
+            return JsonResponse({"like_status" : 1, "likes_cnt": str(post.like_set.all().count())})
+
+    else:
+        return HttpResponse("Failure :(") 
