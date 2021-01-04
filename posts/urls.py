@@ -38,4 +38,7 @@ urlpatterns = [
         view = views.toggle_like,
         name='like'
     ),
+
+    path('search.json', views.autocompleteModel, name="autocomplete"),
+
 ]

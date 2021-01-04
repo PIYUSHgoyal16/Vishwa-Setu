@@ -51,7 +51,7 @@ def get_text(file):
     
     driver = webdriver.Chrome("/home/piyush/Downloads/chromedriver")
     driver.get("https://ocr.sanskritdictionary.com/#")
-    driver.find_element_by_id("pictureFile").send_keys(file)
+    driver.find_element_by_id("pictureFile").send_keys(os.getcwd() + "/media/" + file)
 
     time.sleep(15)
     driver.switch_to.frame(driver.find_element_by_xpath('//*[@id="tinymcetext_ifr"]'))

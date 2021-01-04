@@ -16,6 +16,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
 from .APIs.api import objDetect, get_text
 # from django.http import HttpResponse
+import json
 
 # Models
 from posts.models import Post, Like
@@ -44,16 +45,19 @@ def CreatePhotoView(request):
             profilePK = str(request.user.profile.pk)
             caption = form.cleaned_data['caption']
             photo = form.cleaned_data['photo']
-
+            choice = form.cleaned_data['choice']
             fs = FileSystemStorage()
             filename = fs.save("posts/photos/"+photo.name, photo)
-            print("/n/n" , filename , "/n/n")
             
             # Obj Detect
-            objDetect(filename)
+            if choice == "Object Detection":
+                objDetect(filename)
+            elif choice == "Extract text":
+                text = get_text(filename)
+                filename = "posts/photos/"+ textToImage([text],profilePK)    
 
             ProfileObj = Profile.objects.get(pk=int(profilePK))
-            PostObj = Post(profile=ProfileObj, title=caption, photo="posts/photos/" + photo.name)
+            PostObj = Post(profile=ProfileObj, title=caption, photo=filename)
             PostObj.save()
             return redirect('/')
     form = PostForm3()
@@ -65,18 +69,26 @@ class PostFeedView(ListView):
     template_name = 'posts/feed.html'
     model = Post
     ordering = ('-created',)
-    paginate_by = 10
+    paginate_by = 4
     context_object_name = 'posts'
 
     def get_queryset(self):
         view = self.request.GET.get('view', 'personal')
+
         if view == 'personal':
-            new_context = Post.objects.filter(profile = self.request.user.profile)
+            # following = Profile.objects.filter(following = self.request.user.profile)
+            following = self.request.user.profile.following.all()
+            new_context = Post.objects.filter(profile__in = following).order_by("-created")
+            # new_context = Post.objects.filter(profile = self.request.user.profile).order_by("-created")
             return new_context
         elif view == 'global':
-            return Post.objects.all()
+            return Post.objects.all().order_by("-created")
         else:
-            return Post.objects.filter(Profile = self.request.user)
+            # following = Profile.objects.filter(following = self.request.user.profile)
+            following = self.request.user.profile.following.all()
+            new_context = Post.objects.filter(profile__in = following).order_by("-created")
+            # return Post.objects.filter(Profile = self.request.user).order_by("-created")
+            return new_context
             
     def get_context_data(self, **kwargs):
         context = super(PostFeedView, self).get_context_data(**kwargs)
@@ -111,3 +123,13 @@ def toggle_like(request):
 
     else:
         return HttpResponse("Failure :(") 
+
+def autocompleteModel(request):
+    search_qs = Profile.objects.filter(user__username__startswith=request.GET['search'])
+    print(search_qs)
+    results = []
+    for r in search_qs:
+        results.append(r.user.username)
+        # print("Focus here --> ", r, type(r), type(r.user.username))
+    resp = request.GET['callback'] + '(' + json.dumps(results) + ');'
+    return HttpResponse(resp, content_type='application/json')
