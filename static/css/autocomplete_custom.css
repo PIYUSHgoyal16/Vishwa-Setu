@@ -1,5 +1,5 @@
 .ui-autocomplete {
-    position: absolute;
+    position: relative;
     top: 100%;
     left: 0;
     z-index: 1000;
@@ -9,7 +9,7 @@
     padding: 4px 0;
     margin: 0 0 10px 25px;
     list-style: none;
-    background-color: #ffffff;
+    background-color: black !important;
     border-color: #ccc;
     border-color: rgba(0, 0, 0, 0.2);
     border-style: solid;
@@ -28,6 +28,7 @@
 }
 
 .ui-menu-item > a.ui-corner-all {
+    background-color: black;
     display: block;
     padding: 3px 15px;
     clear: both;

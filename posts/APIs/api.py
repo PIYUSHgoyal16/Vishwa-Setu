@@ -9,6 +9,15 @@ import numpy as np
 from PIL import ImageFont, ImageDraw, Image
 import os
 
+def eng_to_sans(word):
+    url = "https://sanskritdictionary.com/?q=" + word + "&display=devanagari"
+    driver = webdriver.Chrome("/home/piyush/Downloads/chromedriver")
+    driver.minimize_window()
+    driver.get(url)
+
+    result = driver.find_element_by_xpath('/html/body/table[1]/tbody/tr[5]/td[2]/table/tbody/tr/td/div/table/tbody/tr[3]/td[1]')
+    return result.text
+
 def objDetect(file):
     classNames= []
     classFile = 'posts/APIs/coco.names'
@@ -40,7 +49,7 @@ def objDetect(file):
             font = ImageFont.truetype(fontpath, 32)
             img_pil = Image.fromarray(img)
             draw = ImageDraw.Draw(img_pil)
-            draw.text((box[0]+10,box[1]+30), classNames[2*classId-1], font=font, fill=(255,255,255))
+            draw.text((box[0]+10,box[1]+30), eng_to_sans(classNames[2*classId-2]), font=font, fill=(255,255,255))
             objs.append(classNames[2*classId-1])
             img = np.array(img_pil)
 

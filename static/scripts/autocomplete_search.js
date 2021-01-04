@@ -16,6 +16,10 @@ function searchOpen() {
 
 function searchResult(data) {
     $( "#txtSearch" ).autocomplete ({
-        source: data
+        source: data,
+        select: function() {
+            var user_to_search = $('#txtSearch').val();
+            window.location.href = "/users/"+user_to_search;
+        }
     });
 }

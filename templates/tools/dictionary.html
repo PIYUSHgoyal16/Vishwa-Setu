@@ -4,6 +4,9 @@
     <title>Dictionary - VishwaSetu</title>
 {% endblock head_content %}
 {% block container %}
+
+    <h1>Dictionary</h1>
+    
     <form method="POST">
         {% csrf_token %}
         {% for input in form %}
