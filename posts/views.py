@@ -20,7 +20,7 @@ import json
 
 # Models
 from posts.models import Post, Like
-from users.models import Profile
+from users.models import Profile, Follow
 
 @login_required
 def CreatePostView(request):
@@ -75,26 +75,19 @@ class PostFeedView(ListView):
     def get_queryset(self):
         view = self.request.GET.get('view', 'personal')
 
-        if view == 'personal':
-            # following = Profile.objects.filter(following = self.request.user.profile)
-            following = self.request.user.profile.following.all()
-            new_context = Post.objects.filter(profile__in = following).order_by("-created")
-            # new_context = Post.objects.filter(profile = self.request.user.profile).order_by("-created")
-            return new_context
-        elif view == 'global':
-            return Post.objects.all().order_by("-created")
+        if view == 'global':
+            return Post.objects.all().annotate(num_likes=Count('like')).order_by('-num_likes')
         else:
-            # following = Profile.objects.filter(following = self.request.user.profile)
-            following = self.request.user.profile.following.all()
-            new_context = Post.objects.filter(profile__in = following).order_by("-created")
-            # return Post.objects.filter(Profile = self.request.user).order_by("-created")
+            print("Current user: ", self.request.user.username)
+            followers_list = Follow.objects.filter(follower = self.request.user.profile).values("following")
+            # print("focus here --> ", followers_list)
+            new_context = Post.objects.filter(profile__in = followers_list).order_by("-created")
             return new_context
             
     def get_context_data(self, **kwargs):
         context = super(PostFeedView, self).get_context_data(**kwargs)
         context["view"] = self.request.GET.get('view', 'personal')
         return context
-
 
 class PostDetailView(DetailView):
     """Detail view posts"""
