@@ -59,3 +59,6 @@ def sandhi_splitter(request):
 
     form = SandhiSplitterForm()
     return render(request, 'tools/sandhi_splitter.html', {'form' : form, 'result':False})
+
+def resources(request):
+    return render(request, 'tools/resources.html')

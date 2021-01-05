@@ -6,6 +6,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 import time
 from selenium.webdriver.common.action_chains import ActionChains 
 from selenium.webdriver.support.select import Select 
+import re
+import requests
 
 def sandhi_api(txt1, txt2):
     
@@ -66,22 +68,61 @@ def sandhi_splitter_api(txt1, type):
         result += word.text
     return result
 
+
 def eng_to_sans_api(word):
     url = "https://sanskritdictionary.com/?q=" + word + "&display=devanagari"
-    driver = webdriver.Chrome("/home/piyush/Downloads/chromedriver")
-    driver.minimize_window()
-    driver.get(url)
 
-    result = driver.find_element_by_xpath('/html/body/table[1]/tbody/tr[5]/td[2]/table/tbody/tr/td/div/table/tbody/tr[3]/td[1]')
-    return result.text
+    payload={}
+    headers = {
+    'authority': 'sanskritdictionary.com',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-user': '?1',
+    'sec-fetch-dest': 'document',
+    'referer': 'https://sanskritdictionary.com/?iencoding=iast&q=bird&lang=sans&action=Search',
+    'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7',
+    'cookie': '__cfduid=d297f8dcbd0386b680d40d4989cf294f91609240752; PHPSESSID=6383ad43abb377e2e868b973282e8b8a; enabled=1; sansVisitor=XzoGdS4XVX2JFhv4sVGiDIKWU; enabled=1; sansVisitor=ZGs9tx7lM9AUZQdVlyed05Llf'
+    }
 
+    response = requests.request("GET", url, headers=headers, data=payload)
 
-def sans_to_eng_api(word): 
+    ans = response.text.split("<tr style='background: white;'><td width='30%'>")
 
-    url = "https://sanskritdictionary.com/?q=" + word + "&lang=en&action=Search"
-    driver = webdriver.Chrome("/home/piyush/Downloads/chromedriver")
-    driver.minimize_window()
-    driver.get(url)
-    
-    result = driver.find_element_by_xpath('/html/body/table[1]/tbody/tr[3]/td[2]/table/tbody/tr/td/div/table/tbody/tr[3]/td[2]')
-    return result.text
+    if (len(ans) > 1):
+        ans = ans[1].split(">")
+        if (len(ans) > 1):
+            return ans[1].split("<")[0]
+
+    return "Not Found"
+
+def sans_to_eng_api(word):
+    url = "https://sanskritdictionary.com/?iencoding=iast&q=" + word + "&lang=sans&action=Search"
+
+    payload={}
+    headers = {
+    'authority': 'sanskritdictionary.com',
+    'upgrade-insecure-requests': '1',
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+    'sec-fetch-site': 'same-origin',
+    'sec-fetch-mode': 'navigate',
+    'sec-fetch-user': '?1',
+    'sec-fetch-dest': 'document',
+    'referer': 'https://sanskritdictionary.com/?iencoding=iast&q=%E0%A4%A6%E0%A5%87%E0%A4%B9&lang=sans&action=Search',
+    'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7',
+    'cookie': '__cfduid=d297f8dcbd0386b680d40d4989cf294f91609240752; PHPSESSID=6383ad43abb377e2e868b973282e8b8a; enabled=1; sansVisitor=XzoGdS4XVX2JFhv4sVGiDIKWU; enabled=1; sansVisitor=ZGs9tx7lM9AUZQdVlyed05Llf'
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    ans = response.text.split("</td><td width='50%'>")
+    if (len(ans) > 1):
+        ans = ans[1].split("</b>")
+        if (len(ans) > 1):
+            return re.sub(r'[^A-Za-z0-9 ]+', '', ans[1].split("<")[0])
+        else:
+            return re.sub(r'[^A-Za-z0-9 ]+', '', ans[0].split("<")[0])
+    return "Not Found"

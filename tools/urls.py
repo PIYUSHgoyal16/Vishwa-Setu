@@ -22,4 +22,10 @@ urlpatterns = [
         view=views.sandhi_splitter,
         name='sandhi_splitter'
     ),
+
+    path(
+        route='resources/',
+        view=views.resources,
+        name='resources'
+    ),
 ]

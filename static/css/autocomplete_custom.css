@@ -1,5 +1,7 @@
 .ui-autocomplete {
-    position: relative;
+    position: absolute;
+    top: 5vh;
+    left: 56vh;
     top: 100%;
     left: 0;
     z-index: 1000;
